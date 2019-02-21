@@ -3,11 +3,14 @@ import me.xnuminousx.spirits.Methods;
 import me.xnuminousx.spirits.Methods.SpiritType;
 import me.xnuminousx.spirits.ability.api.DarkAbility;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffect;
@@ -19,7 +22,6 @@ import com.projectkorra.projectkorra.ProjectKorra;
 import com.projectkorra.projectkorra.ability.AddonAbility;
 import com.projectkorra.projectkorra.configuration.ConfigManager;
 import com.projectkorra.projectkorra.util.DamageHandler;
-import com.projectkorra.projectkorra.util.ParticleEffect;
 
 public class DarkBlast extends DarkAbility implements AddonAbility
 {
@@ -34,6 +36,10 @@ public class DarkBlast extends DarkAbility implements AddonAbility
   private Vector direction;
   private double t;
   private Permission perm;
+  
+  private Color red = Color.fromRGB(150, 0, 0);
+  private Color darkPurple = Color.fromRGB(90, 0, 140);
+  private Color black = Color.fromRGB(0, 0, 0);
   
   public DarkBlast(Player player)
   {
@@ -88,15 +94,12 @@ public class DarkBlast extends DarkAbility implements AddonAbility
   {
     this.direction = GeneralMethods.getTargetedLocation(this.player, 1).getDirection();
     Location p = this.location.add(this.direction);
-    ParticleEffect.RED_DUST.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0005f, 10,
-			p, 500D);
-    GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-	GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
-	GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-	GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
-	GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-	GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
-    this.location.getWorld().playSound(p, Sound.BLOCK_NOTE_BASS, 1.0F, 0.01F);
+    player.getWorld().spawnParticle(Particle.REDSTONE, p, 10, Math.random(), Math.random(), Math.random(), 1, new DustOptions(red, 1));
+    /*ParticleEffect.RED_DUST.display((float) Math.random(), (float) Math.random(), (float) Math.random(), 0.0005f, 10,
+			p, 500D);*/
+    player.getWorld().spawnParticle(Particle.REDSTONE, location, 3, 0, 0, 0, 1, new DustOptions(darkPurple, 1));
+    player.getWorld().spawnParticle(Particle.REDSTONE, location, 3, 0, 0, 0, 1, new DustOptions(black, 1));
+    this.location.getWorld().playSound(p, Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 0.01F);
     for (Entity e : GeneralMethods.getEntitiesAroundPoint(this.location, 2.5D)) {
       if (((e instanceof LivingEntity)) && (e.getEntityId() != this.player.getEntityId()))
       {
@@ -147,12 +150,8 @@ public class DarkBlast extends DarkAbility implements AddonAbility
         double y = 0.5D * (8.866370614359172D - this.t);
         double z = 0.5D * (5.566370614359172D - this.t) * Math.sin(this.t + phi);
         location.add(x, y, z);
-        GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-		GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
-		GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-		GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
-		GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-		GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
+        player.getWorld().spawnParticle(Particle.REDSTONE, location, 3, 0, 0, 0, 1, new DustOptions(darkPurple, 1));
+        player.getWorld().spawnParticle(Particle.REDSTONE, location, 3, 0, 0, 0, 1, new DustOptions(black, 1));
         location.getWorld().playSound(location, Sound.ENTITY_ENDERMITE_STEP, 0.2F, 1.0F);
         location.subtract(x, y, z);
       }
@@ -170,8 +169,8 @@ public class DarkBlast extends DarkAbility implements AddonAbility
             double y = 1.2 * Math.cos(angle) + 1.2;
             double z = size * (Math.PI * 4 - angle) * Math.sin(angle + i);
 			location.add(x, y, z);
-			GeneralMethods.displayColoredParticle(location, "20005B", 0, 0, 0);
-			GeneralMethods.displayColoredParticle(location, "000000", 0, 0, 0);
+			player.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 1, new DustOptions(darkPurple, 1));
+		    player.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 1, new DustOptions(black, 1));
 			location.subtract(x, y, z);
 		}
 		}
@@ -200,7 +199,7 @@ public long getCooldown()
   
   public String getInstructions()
   {
-    return Methods.setSpiritDescriptionColor(SpiritType.NEUTRAL) + "Hold (SHIFT) until it is charged around you and then release.";
+    return Methods.setSpiritDescriptionColor(SpiritType.DARK) + "Hold (SHIFT) until it is charged around you and then release.";
   }
   
   public boolean isHarmlessAbility()
